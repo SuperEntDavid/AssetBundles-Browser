@@ -678,9 +678,9 @@ namespace AssetBundleBrowser.AssetBundleModel
         {
             if (!name.StartsWith("Assets/"))
                 return false;
-            string ext = System.IO.Path.GetExtension(name);
-            if (ext == ".dll" || ext == ".cs" || ext == ".meta" || ext == ".js" || ext == ".boo")
-                return false;
+            string ext = System.IO.Path.GetExtension(name).ToLower();
+            if (ext == ".dll" || ext == ".cs" || ext == ".meta" || ext == ".js" || ext == ".boo" || ext == ".shadersubgraph")
+	            return false;
 
             return true;
         }
