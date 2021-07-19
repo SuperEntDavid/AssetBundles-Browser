@@ -30,6 +30,7 @@ namespace AssetBundleBrowser.AssetBundleModel
         private static List<BundleInfo> s_BundlesToUpdate = new List<BundleInfo>();
         private static Dictionary<string, AssetInfo> s_GlobalAssetList = new Dictionary<string, AssetInfo>();
         private static Dictionary<string, HashSet<string>> s_DependencyTracker = new Dictionary<string, HashSet<string>>();
+        private static Func<string, bool> s_CustomAssetValidationFunction;
 
         private static bool s_InErrorState = false;
         const string k_DefaultEmptyMessage = "Drag assets here or right-click to begin creating bundles.";
@@ -59,6 +60,12 @@ namespace AssetBundleBrowser.AssetBundleModel
                 return s_DataSource;
             }
             set { s_DataSource = value; }
+        }
+
+        public static void AssignCustomAssetValidationFunction(Func<string, bool> customAssetValidationFunction)
+        {
+	        s_CustomAssetValidationFunction = customAssetValidationFunction;
+	        Rebuild();
         }
 
         /// <summary>
@@ -681,6 +688,12 @@ namespace AssetBundleBrowser.AssetBundleModel
             string ext = System.IO.Path.GetExtension(name).ToLower();
             if (ext == ".dll" || ext == ".cs" || ext == ".meta" || ext == ".js" || ext == ".boo" || ext == ".shadersubgraph")
 	            return false;
+            
+            if (s_CustomAssetValidationFunction?.Invoke(name) == false)
+            {
+	            return false;
+            }
+            
 
             return true;
         }
